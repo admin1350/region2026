@@ -116,15 +116,21 @@ VLAN - cod:
     vim /etc/sysconfig/network
 
 указать имя в параметре HOSTNAME:
+
 ![](photo/po1.png)
+
 Настройка IP-адресов:
 
     ens19 - доступ в сеть Интернет (SDN Simple Zone)
     ens20 - сеть в сторону rtr-cod
     ens21 - сеть в сторону rtr-a
+
 ![](photo/po2.png)
+
 В данном случае для доступа в сеть Интернет на ISP будет задаваться статическая конфигурация, поэтому файл options для интерфейса ens19 выглядит следующим образом:
+
 ![](photo/po3.png)
+
 Копируем рекурсивно директорию ens19 для интерфейсов ens20 и ens21, т.к. файл options будет выглядеть аналогичным обра
 
     cp -r /etc/net/ifaces/ens19 /etc/net/ifaces/ens20
@@ -151,11 +157,17 @@ VLAN - cod:
     systemctl restart network
 Проверить:
     IP-адреса на интерфейсах:
+
 ![](photo/po4.png)
+
 Наличие шлюза по умолчанию и DNS:
+
 ![](photo/po5.png)
+
 Перессылку пакетов и доступ в сеть Интернет:
+
 ![](photo/po6.png)
+
 Установим iptables для настройки NAT:
 
     apt-get update && apt-get install -y iptables
@@ -175,11 +187,14 @@ VLAN - cod:
     systemctl enable --now iptables
 Проверить, наличие правила в iptables, а именно в таблице nat, в цепочек POSTROUTING:
 
+
 ![](photo/po7.png)
+
 Для установки и дальнейшей настройки DNS-сервера, необходимо выполнить установку пакета BIND:
 
     apt-get install bind bind-utils -y
 После установки пакета bind приведём конфигурационный файл /etc/net/ifaces/ens19/resolv.conf к следующему виду:
+
 ![](photo/po8.png)
 
 Для применения настроек, необходимо перезагрузить службу network
@@ -193,12 +208,14 @@ VLAN - cod:
     listen-on параметр определяет адреса и порты, на которых DNS-сервер будет слушать запросы;
     В параметре forwarders указываются сервера, куда будут перенаправляться запросы, на которые нет информации в локальной зоне;
     allow-query – IP-адреса и подсети от которых будут обрабатываться запросы;
+
 ![](photo/po9.png)
 
 Далее необходимо добавить зоны прямого и обратного просмотра в файл /var/lib/bind/etc/rfc1912.conf:
 
     vim /var/lib/bind/etc/rfc1912.conf
 Добавляем следующее содержимое (в конец файла):
+
 ![](photo/po10.png)
 
 Создаём файл зоны прямого просмотра из шаблона:
@@ -209,7 +226,9 @@ VLAN - cod:
 
     vim /var/lib/bind/etc/zone/ssa2026.ru
 который является прямой зоной следующим образом:
+
 ![](photo/po11.png)
+
 Задать соответствующие права на файл:
 
     chown root:named /var/lib/bind/etc/zone/ssa2026.ru
@@ -220,14 +239,21 @@ VLAN - cod:
 
     sed -i ‘6,$d’ /var/lib/bind/etc/rndc.key
 Результат:
+
 ![](photo/po12.png)
+
 Проверить конфигурационные файлы и файлы зон:
+
 ![](photo/po13.png)
+
 После этого можно запустить службу bind: 
 
     systemctl enable --now bind.service
+
 Проверить работоспособность DNS:
+
 ![](photo/po14.png)
+
 Настроить часовой пояс:
 
     timedatectl set-timezone Europe/Moscow
@@ -238,18 +264,24 @@ VLAN - cod:
 Проверить:
     
     timedatectl
+
 ![](photo/po15.png)
+
 Редактируем конфигурационный файл /etc/chrony.conf:
 
     vim /etc/chrony.conf
 Добавляем следующую информацию:
+
 ![](photo/po16.png)
+
 Перезагружаем службу chronyd для применения изменений:
 
     systemctl restart chronyd
 
 Проверяем:
+
 ![](photo/po17.png)
+
 Устанавливаем пакет frr для настройки маршрутизации:
 
     apt-get install -y frr
@@ -258,14 +290,21 @@ VLAN - cod:
 
     vim /etc/frr/daemons
  переводим bgpd=no в bgpd=yes - для BGP:
+
 ![](photo/po18.png)
+
 Включаем и добавляем в автозагрузку службу frr:
 
     systemctl enable --now frr
+
 Проверить:
+
 ![](photo/po19.png)
+
  Настраиваем BGP - переходим в интерфейс frr при помощи "vtysh":
+
 ![](photo/po20.png)
+
 Реализуем настройку BGP:
     перейдите в режим конфигурирования работы протокола BGP указав № AS;
     задайте  router-id;
@@ -273,9 +312,13 @@ VLAN - cod:
     перейдите в режим настройки address family;
     укажите что маршрутизатор ЦОД должен получать маршрут по умолчанию по BGP;
     сохраните конфигурацию
+
 ![](photo/po21.png)
+
 Проверить
+
 ![](photo/po22.png)
+
 Проверка подключения маршрутизатора rtr-cod по bgp:
     без сохранения настроек, чтобы при перезугрузки конфигураци не сохранилась
 
@@ -300,8 +343,12 @@ VLAN - cod:
     ecorouter#
 
 Результат:
+
 ![](photo/po26.png)
+
 ![](photo/po23.png)
+
 ![](photo/po24.png)
+
 ![](photo/po25.png)
 
