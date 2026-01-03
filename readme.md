@@ -105,4 +105,8 @@ VLAN - cod:
     DNS
     NTP
     BGP
+### Вариант реализации:
 
+    Настройка имени на устройстве:
+
+        hostnamectl set-hostname isp; exec bash
