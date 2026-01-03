@@ -12,4 +12,5 @@ test file
  
 
 Время на выполнение модуля: 7 часов
-![Cхема подключения](https://github.com/admin1350/region2026/blob/main/photo/image_png.png)
+Схема Подкоючения:
+![](https://github.com/admin1350/region2026/blob/main/photo/image_png.png)
