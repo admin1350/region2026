@@ -300,7 +300,8 @@ VLAN - cod:
     ecorouter#
 
 Результат:
+![](photo/po26.png)
 ![](photo/po23.png)
 ![](photo/po24.png)
 ![](photo/po25.png)
-![](photo/po26.png)
+
