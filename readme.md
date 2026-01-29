@@ -857,3 +857,7 @@ service iscsid force-start
 iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
 iscsiadm --mode node -l all
 iscsiadm --mode session
+
+
+# 22 Настройка системы мониторинга
+на rtr-a прописать security none, иначе не работает smnp нормально
