@@ -111,221 +111,248 @@ VLAN - cod:
 * BGP
 ### Вариант реализации:
 
-Настройка имени на устройстве:
+* Настройка имени на устройстве:
+  
+  ``` hostnamectl set-hostname isp; exec bash ```
 
-    hostnamectl set-hostname isp; exec bash
+* так же рекомендуется указать имя в файле /etc/sysconfig/network:
 
-так же рекомендуется указать имя в файле /etc/sysconfig/network:
+    ```vim /etc/sysconfig/network```
 
-    vim /etc/sysconfig/network
-
-указать имя в параметре HOSTNAME:
+    * указать имя в параметре HOSTNAME:
 
 ![](photo/po1.png)
 
-Настройка IP-адресов:
+* Настройка IP-адресов:
 
-    ens19 - доступ в сеть Интернет (SDN Simple Zone)
-    ens20 - сеть в сторону rtr-cod
-    ens21 - сеть в сторону rtr-a
+    * ens19 - доступ в сеть Интернет (SDN Simple Zone)
+    * ens20 - сеть в сторону rtr-cod
+    * ens21 - сеть в сторону rtr-a
 
 ![](photo/po2.png)
 
-В данном случае для доступа в сеть Интернет на ISP будет задаваться статическая конфигурация, поэтому файл options для интерфейса ens19 выглядит следующим образом:
+* В данном случае для доступа в сеть Интернет на ISP будет задаваться статическая конфигурация, поэтому файл options для интерфейса ens19 выглядит следующим образом:
 
 ![](photo/po3.png)
 
-Копируем рекурсивно директорию ens19 для интерфейсов ens20 и ens21, т.к. файл options будет выглядеть аналогичным обра
+* Копируем рекурсивно директорию ens19 для интерфейсов ens20 и ens21, т.к. файл options будет выглядеть аналогичным обра
+```
+cp -r /etc/net/ifaces/ens19 /etc/net/ifaces/ens20
+```
+```
+cp -r /etc/net/ifaces/ens19 /etc/net/ifaces/ens21
+```
+* Задаём соответствующие IP-адреса на интерфейсы:
+```
+echo "100.100.100.100/24" > /etc/net/ifaces/ens19/ipv4address
+```
+```
+echo "178.207.179.1/29" > /etc/net/ifaces/ens20/ipv4address
+```
+```
+echo "178.207.179.25/29" > /etc/net/ifaces/ens21/ipv4address
+```
+* Задаём IP-адрес шлюза по умолчанию и DNS-сервера (временно, для установки необходимых пакетов):
+```
+echo "default via 100.100.100.1" > /etc/net/ifaces/ens19/ipv4route
+```
+```
+echo "nameserver 77.88.8.8" > /etc/net/ifaces/ens19/resolv.conf
+```
+* Включаем возможность перессылки пакетов:
+* Для того чтобы устройство ISP могло пересылать пакеты с интерфейса на интерфейс, необходимо включить пересылку пакетов (forwarding)
+    * Для этого следует в конфигурационном файле /etc/net/sysctl.conf в параметре net.ipv4.ip_forward = 0 заменить значение с 0 на 1
+```
+sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g" /etc/net/sysctl.conf
+```
 
-    cp -r /etc/net/ifaces/ens19 /etc/net/ifaces/ens20
-    cp -r /etc/net/ifaces/ens19 /etc/net/ifaces/ens21
-Задаём соответствующие IP-адреса на интерфейсы:
-
-    echo "100.100.100.100/24" > /etc/net/ifaces/ens19/ipv4address
-    echo "178.207.179.1/29" > /etc/net/ifaces/ens20/ipv4address
-    echo "178.207.179.25/29" > /etc/net/ifaces/ens21/ipv4address
-Задаём IP-адрес шлюза по умолчанию и DNS-сервера (временно, для установки необходимых пакетов):
-
-    echo "default via 100.100.100.1" > /etc/net/ifaces/ens19/ipv4route
-    echo "nameserver 77.88.8.8" > /etc/net/ifaces/ens19/resolv.conf
-
- Включаем возможность перессылки пакетов:
-Для того чтобы устройство ISP могло пересылать пакеты с интерфейса на интерфейс, необходимо включить пересылку пакетов (forwarding)
-        Для этого следует в конфигурационном файле /etc/net/sysctl.conf в параметре                       net.ipv4.ip_forward = 0 заменить значение с 0 на 1
-
-    sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g" /etc/net/sysctl.conf
-
-
-Для применения настроек, необходимо перезагрузить службу network
-
+* Для применения настроек, необходимо перезагрузить службу network
+```
     systemctl restart network
-Проверить:
-    IP-адреса на интерфейсах:
+```
+* Проверить:
+    * IP-адреса на интерфейсах:
 
 ![](photo/po4.png)
-
-Наличие шлюза по умолчанию и DNS:
+* Наличие шлюза по умолчанию и DNS:
 
 ![](photo/po5.png)
 
-Перессылку пакетов и доступ в сеть Интернет:
+* Перессылку пакетов и доступ в сеть Интернет:
 
 ![](photo/po6.png)
 
-Установим iptables для настройки NAT:
+* Установим iptables для настройки NAT:
+```
+apt-get update && apt-get install -y iptables
+```
 
-    apt-get update && apt-get install -y iptables
+* Реализацию сетевой трансляции адресов с помощью iptables можно выполнить одной командой:
+    * где, ens19 внешний интерфейс, подключённый к магистральному провайдеру
+    * также реалиуем трансляцию адресов только из конкретных сетей rtr-cod и rtr-a
+```
+iptables –t nat –A POSTROUTING -s 178.207.179.0/29 –o ens19 –j MASQUERADE
+iptables –t nat –A POSTROUTING -s 178.207.179.24/29 –o ens19 –j MASQUERADE
+```
+* Сохраняем правила iptables на постоянной основе (после перезагрузки):
+```    
+iptables-save >> /etc/sysconfig/iptables
+```
+* Включаем и добавляем в автозагрузку службу iptables:
+```
+systemctl enable --now iptables
+```
 
-
-Реализацию сетевой трансляции адресов с помощью iptables можно выполнить одной командой:
-        где, ens19 внешний интерфейс, подключённый к магистральному провайдеру
-        также реалиуем трансляцию адресов только из конкретных сетей rtr-cod и rtr-a
-
-    iptables –t nat –A POSTROUTING -s 178.207.179.0/29 –o ens19 –j MASQUERADE
-    iptables –t nat –A POSTROUTING -s 178.207.179.24/29 –o ens19 –j MASQUERADE
-Сохраняем правила iptables на постоянной основе (после перезагрузки):
-    
-    iptables-save >> /etc/sysconfig/iptables
-Включаем и добавляем в автозагрузку службу iptables:
-
-    systemctl enable --now iptables
-Проверить, наличие правила в iptables, а именно в таблице nat, в цепочек POSTROUTING:
+* Проверить, наличие правила в iptables, а именно в таблице nat, в цепочек POSTROUTING:
 
 
 ![](photo/po7.png)
 
-Для установки и дальнейшей настройки DNS-сервера, необходимо выполнить установку пакета BIND:
+* Для установки и дальнейшей настройки DNS-сервера, необходимо выполнить установку пакета BIND:
+```
+apt-get install bind bind-utils -y
+```
 
-    apt-get install bind bind-utils -y
-После установки пакета bind приведём конфигурационный файл /etc/net/ifaces/ens19/resolv.conf к следующему виду:
+* После установки пакета bind приведём конфигурационный файл /etc/net/ifaces/ens19/resolv.conf к следующему виду:
 
 ![](photo/po8.png)
 
-Для применения настроек, необходимо перезагрузить службу network
+* Для применения настроек, необходимо перезагрузить службу network
+```
+systemctl restart network
+```
 
-    systemctl restart network
+* Далее выполняется редактирование конфигурационного файла /var/lib/bind/etc/options.conf согласно скриншоту
+```
+vim /var/lib/bind/etc/options.conf
+```
 
-Далее выполняется редактирование конфигурационного файла /var/lib/bind/etc/options.conf согласно скриншоту
-
-    vim /var/lib/bind/etc/options.conf
-где:
-    listen-on параметр определяет адреса и порты, на которых DNS-сервер будет слушать запросы;
-    В параметре forwarders указываются сервера, куда будут перенаправляться запросы, на которые нет информации в локальной зоне;
-    allow-query – IP-адреса и подсети от которых будут обрабатываться запросы;
+ * где:
+    * listen-on параметр определяет адреса и порты, на которых DNS-сервер будет слушать запросы; 
+    * В параметре forwarders указываются сервера, куда будут перенаправляться запросы, на которые нет информации в локальной зоне;
+    * allow-query – IP-адреса и подсети от которых будут обрабатываться запросы;
 
 ![](photo/po9.png)
 
-Далее необходимо добавить зоны прямого и обратного просмотра в файл /var/lib/bind/etc/rfc1912.conf:
-
-    vim /var/lib/bind/etc/rfc1912.conf
-Добавляем следующее содержимое (в конец файла):
+* Далее необходимо добавить зоны прямого и обратного просмотра в файл /var/lib/bind/etc/rfc1912.conf:
+```
+vim /var/lib/bind/etc/rfc1912.conf
+```
+* Добавляем следующее содержимое (в конец файла):
 
 ![](photo/po10.png)
 
-Создаём файл зоны прямого просмотра из шаблона:
-
-    cp /var/lib/bind/etc/zone/empty /var/lib/bind/etc/zone/ssa2026.ru
- 
- Необходимо сконфигурировать файл ssa2026.ru:
-
-    vim /var/lib/bind/etc/zone/ssa2026.ru
-который является прямой зоной следующим образом:
+* Создаём файл зоны прямого просмотра из шаблона:
+```
+cp /var/lib/bind/etc/zone/empty /var/lib/bind/etc/zone/ssa2026.ru
+``` 
+* Необходимо сконфигурировать файл ssa2026.ru:
+```
+vim /var/lib/bind/etc/zone/ssa2026.ru
+```
+* который является прямой зоной следующим образом:
 
 ![](photo/po11.png)
 
-Задать соответствующие права на файл:
-
-    chown root:named /var/lib/bind/etc/zone/ssa2026.ru
-После того, как конфигурация зон была завершена, для корректной работы службы bind необходимо выполнить команду:
-
-    rndc-confgen > /var/lib/bind/etc/rndc.key 
-Затем выполнить команду:
-
-    sed -i ‘6,$d’ /var/lib/bind/etc/rndc.key
-Результат:
+* Задать соответствующие права на файл:
+```
+chown root:named /var/lib/bind/etc/zone/ssa2026.ru
+```
+* После того, как конфигурация зон была завершена, для корректной работы службы bind необходимо выполнить команду:
+```
+rndc-confgen > /var/lib/bind/etc/rndc.key 
+```
+* Затем выполнить команду:
+```
+sed -i ‘6,$d’ /var/lib/bind/etc/rndc.key
+```
+* Результат:
 
 ![](photo/po12.png)
 
-Проверить конфигурационные файлы и файлы зон:
+* Проверить конфигурационные файлы и файлы зон:
 
 ![](photo/po13.png)
 
-После этого можно запустить службу bind: 
-
-    systemctl enable --now bind.service
-
-Проверить работоспособность DNS:
+* После этого можно запустить службу bind:
+```
+systemctl enable --now bind.service
+```
+* Проверить работоспособность DNS:
 
 ![](photo/po14.png)
 
-Настроить часовой пояс:
-
-    timedatectl set-timezone Europe/Moscow
-
-На JeOS возможно потребуется установка пакета tzdata: 
-
-    apt-get install -y tzdata
-Проверить:
-    
-    timedatectl
-
+* Настроить часовой пояс:
+```
+timedatectl set-timezone Europe/Moscow
+```
+* На JeOS возможно потребуется установка пакета tzdata: 
+```
+apt-get install -y tzdata
+```
+* Проверить:
+```
+timedatectl
+```
 ![](photo/po15.png)
 
-Редактируем конфигурационный файл /etc/chrony.conf:
-
-    vim /etc/chrony.conf
-Добавляем следующую информацию:
+* Редактируем конфигурационный файл /etc/chrony.conf:
+```
+vim /etc/chrony.conf
+```
+* Добавляем следующую информацию:
 
 ![](photo/po16.png)
 
-Перезагружаем службу chronyd для применения изменений:
-
-    systemctl restart chronyd
-
-Проверяем:
+* Перезагружаем службу chronyd для применения изменений:
+```
+systemctl restart chronyd
+```
+* Проверяем:
 
 ![](photo/po17.png)
 
-Устанавливаем пакет frr для настройки маршрутизации:
-
-    apt-get install -y frr
-
- В конфигурационном файле "/etc/frr/daemons" необходимо активировать выбранный протокол для дальнейшей реализации его настройки:
-
-    vim /etc/frr/daemons
- переводим bgpd=no в bgpd=yes - для BGP:
+* Устанавливаем пакет frr для настройки маршрутизации:
+```
+apt-get install -y frr
+```
+* В конфигурационном файле "/etc/frr/daemons" необходимо активировать выбранный протокол для дальнейшей реализации его настройки:
+```
+vim /etc/frr/daemons
+```
+* переводим bgpd=no в bgpd=yes - для BGP:
 
 ![](photo/po18.png)
 
-Включаем и добавляем в автозагрузку службу frr:
-
-    systemctl enable --now frr
-
-Проверить:
+* Включаем и добавляем в автозагрузку службу frr:
+```
+systemctl enable --now frr
+```
+* Проверить:
 
 ![](photo/po19.png)
 
- Настраиваем BGP - переходим в интерфейс frr при помощи "vtysh":
+* Настраиваем BGP - переходим в интерфейс frr при помощи "vtysh":
 
 ![](photo/potest.png)
 
-Реализуем настройку BGP:
-    перейдите в режим конфигурирования работы протокола BGP указав № AS;
-    задайте  router-id;
-    добавьте адрес и номер AS соседа;
-    перейдите в режим настройки address family;
-    укажите что маршрутизатор ЦОД должен получать маршрут по умолчанию по BGP;
-    сохраните конфигурацию
+* Реализуем настройку BGP:
+    * перейдите в режим конфигурирования работы протокола BGP указав № AS;
+    * задайте  router-id;
+    * добавьте адрес и номер AS соседа;
+    * перейдите в режим настройки address family;
+    * укажите что маршрутизатор ЦОД должен получать маршрут по умолчанию по BGP;
+    * сохраните конфигурацию
 
 ![](photo/potest1.png)
 
-Проверить
+* Проверить
 
 ![](photo/potest2.png)
 
-Проверка подключения маршрутизатора rtr-cod по bgp:
-    без сохранения настроек, чтобы при перезугрузки конфигураци не сохранилась
-
+* Проверка подключения маршрутизатора rtr-cod по bgp:
+  * без сохранения настроек, чтобы при перезугрузки конфигураци не сохранилась
+```
     ecorouter>en
     ecorouter#conf t
     ecorouter(config)#interface isp
@@ -345,8 +372,8 @@ VLAN - cod:
     ecorouter(config-router)#exit
     ecorouter(config)#exit
     ecorouter#
-
-Результат:
+```
+* Результат:
 
 ![](photo/po26.png)
 
