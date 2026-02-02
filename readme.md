@@ -575,31 +575,31 @@ rtr-a(config)#
 * Указание выполняемой операции выполняется на service-instance с помощью команды rewrite pop <№>
 * ключ 1 показывает, что снимаем только одну, верхнюю метку, на L3 кадр должен поступать без признаков VLAN
 ```
-    rtr-a(config)#port te1
-    rtr-a(config-port)#service-instance te1/vl100
-    rtr-a(config-service-instance)#encapsulation dot1q 100
-    rtr-a(config-service-instance)#rewrite pop 1
-    rtr-a(config-service-instance)#connect in
-    rtr-a(config-service-instance)#connect ip interface vl100                   
-    rtr-a(config-service-instance)#exit
-    rtr-a(config-port)#
-    rtr-a(config-port)#service-instance te1/vl200
-    rtr-a(config-service-instance)#encapsulation dot1q 200
-    rtr-a(config-service-instance)#rewrite pop 1
-    rtr-a(config-service-instance)#connect ip interface vl200 
-    rtr-a(config-service-instance)#exit
-    rtr-a(config-port)#
-    rtr-a(config-port)#service-instance te1/vl300
-    rtr-a(config-service-instance)#encapsulation dot1q 300
-    rtr-a(config-service-instance)#rewrite pop 1
-    rtr-a(config-service-instance)#connect ip interface vl300 
-    rtr-a(config-service-instance)#exit
-    rtr-a(config-port)#exit
-    rtr-a(config)#write memory
+rtr-a(config)#port te1
+rtr-a(config-port)#service-instance te1/vl100
+rtr-a(config-service-instance)#encapsulation dot1q 100
+rtr-a(config-service-instance)#rewrite pop 1
+rtr-a(config-service-instance)#connect in
+rtr-a(config-service-instance)#connect ip interface vl100                   
+rtr-a(config-service-instance)#exit
+rtr-a(config-port)#
+rtr-a(config-port)#service-instance te1/vl200
+rtr-a(config-service-instance)#encapsulation dot1q 200
+rtr-a(config-service-instance)#rewrite pop 1
+rtr-a(config-service-instance)#connect ip interface vl200 
+rtr-a(config-service-instance)#exit
+rtr-a(config-port)#
+rtr-a(config-port)#service-instance te1/vl300
+rtr-a(config-service-instance)#encapsulation dot1q 300
+rtr-a(config-service-instance)#rewrite pop 1
+rtr-a(config-service-instance)#connect ip interface vl300 
+rtr-a(config-service-instance)#exit
+rtr-a(config-port)#exit
+rtr-a(config)#write memory
     
-    Building configuration...
+Building configuration...
     
-    rtr-a(config)#
+rtr-a(config)#
 ```
 * Проверить назначенные IP-адреса на интерфейсы можно командой show ip interface brief из режима администрирования (enable):
 
@@ -618,84 +618,84 @@ rtr-a(config)#
 
 ![](photo/fw-cod1.png)
 
-    Требования к логину и паролю:
-        Логин:
-            Не должен начинаться с цифры.
-            Не должен содержать специальных и пробельных символов, кроме дефиса -.
-            Длина логина - от 1 до 31 символа включительно.
-        Пароль:
-            Длина пароля - от 10 до 42 символов.
-            Содержит строчные и заглавные латинские буквы.
-            Содержит цифры.
-            Содержит специальные символы (! # $ % & ' * + и другие).
-    Если пароль не соответствует требованиям политики безопасности, то появится надпись с информацией, что пароль ненадежен. Потребуется ввести новый пароль с учетом требований к нему.
-    Создадим пользователя admin с паролем P@ssw0rd1234:
+* Требования к логину и паролю:
+    * Логин:
+        * Не должен начинаться с цифры.
+        * Не должен содержать специальных и пробельных символов, кроме дефиса -.
+        * Длина логина - от 1 до 31 символа включительно.
+    * Пароль:
+        * Длина пароля - от 10 до 42 символов.
+        * Содержит строчные и заглавные латинские буквы.
+        * Содержит цифры.
+        * Содержит специальные символы (! # $ % & ' * + и другие).
+* Если пароль не соответствует требованиям политики безопасности, то появится надпись с информацией, что пароль ненадежен. Потребуется ввести новый пароль с учетом требований к нему.
+* Создадим пользователя admin с паролем P@ssw0rd1234:
 
 ![](photo/fw-cod2.png)
 
-    Настройка интерфейса управления
-    Для корректной идентификации сетевой карты используйте MAC-адрес сетевой карты
-    Для настройки Ideco NGFW Novum через веб-интерфейс настройте Control Plane интерфейс в локальном меню
-        Control Plane - интерфейс администрирования, используется для настройки NGFW Novum через браузер и должен иметь свой выход в Интернет
-    Выполните вход из под созданного пользователя admin с паролем P@ssw0rd1234
+#### Настройка интерфейса управления
+* Для корректной идентификации сетевой карты используйте MAC-адрес сетевой карты
+* Для настройки Ideco NGFW Novum через веб-интерфейс настройте Control Plane интерфейс в локальном меню
+    * Control Plane - интерфейс администрирования, используется для настройки NGFW Novum через браузер и должен иметь свой выход в Интернет
+* Выполните вход из под созданного пользователя admin с паролем P@ssw0rd1234
 
 ![](photo/fw-cod3.png)
 
-Перейдите в раздел Ethernet-интерфейсы (3) → Создать интерфейс (3):
+* Перейдите в раздел Ethernet-интерфейсы (3) → Создать интерфейс (3):
 
 ![](photo/fw-cod4.png)
 
-    Пояснения в контексте текущего задания:
-    Поскольку Ideco рекомендуется настраивать через веб-интерфейс, надо настроить IP-адрес для этого доступа
-    Поскольку в сod.ssa2026.region между fw-cod и sw1-cod необходимо организовать агрегированное соединение 802.3ad, (не актуально, от 802.3ad в задании отказались)
-        а также за маршрутизацию между VLAN-ами по топологии будет отвечать fw-cod,
-        то так называемые под-интерфейсы необходимо реализовывать поверх агрегированного канала 802.3ad,
-        в консоле Ideco - это реализовать не получится, править конфигурационные файлы в ideco плохо, можно лишиться технической поддержки.
-    Поэтому как один из способов доступа к веб-интерфейсу это:
-        использование интерфейса в сторону rtr-cod,
-        после реализации туннеля и маршрутизации между rtr-cod и rtr-a, 
-        а также коммутации между sw1-a и sw2-a,
-        у нас появится возможность конфигурировать fw-cod через веб-интерфейс, например с cli1-a или cli2-a,
-        вследствии чего и полная связность между устройствами сod.ssa2026.region и office.ssa2026.region
+#### Пояснения в контексте текущего задания:
+* Поскольку Ideco рекомендуется настраивать через веб-интерфейс, надо настроить IP-адрес для этого доступа
+* Поскольку в сod.ssa2026.region между fw-cod и sw1-cod необходимо организовать агрегированное соединение 802.3ad, (не актуально, от 802.3ad в задании отказались)
+    * а также за маршрутизацию между VLAN-ами по топологии будет отвечать fw-cod,
+    * то так называемые под-интерфейсы необходимо реализовывать поверх агрегированного канала 802.3ad,
+    * в консоле Ideco - это реализовать не получится, править конфигурационные файлы в ideco плохо, можно лишиться технической поддержки.
+* Поэтому как один из способов доступа к веб-интерфейсу это:
+    * использование интерфейса в сторону rtr-cod,
+    * после реализации туннеля и маршрутизации между rtr-cod и rtr-a,
+    * а также коммутации между sw1-a и sw2-a,
+    * у нас появится возможность конфигурировать fw-cod через веб-интерфейс, например с cli1-a или cli2-a,
+    * вследствии чего и полная связность между устройствами сod.ssa2026.region и office.ssa2026.region
 
-Продолжение настройки:
-    Выберите порт для доступа к веб-интерфейсу:
-        сравнив МАС-адреса на уровне виртуальной машины
+#### Продолжение настройки:
+* Выберите порт для доступа к веб-интерфейсу:
+    * сравнив МАС-адреса на уровне виртуальной машины
 ![](photo/fw-cod5.png)
 
 
-Выберите порт для доступа к веб-интерфейсу:
-        в текущем случае выбирается порт в сторону виртуальной машины rtr-cod
+* Выберите порт для доступа к веб-интерфейсу:
+    * в текущем случае выбирается порт в сторону виртуальной машины rtr-cod
 
 ![](photo/fw-cod6.png)
 
-Введите имя интерфейса:
+* Введите имя интерфейса:
 
 ![](photo/fw-cod7.png)
 
-Выберите роль LAN:
+* Выберите роль LAN:
 
 ![](photo/fw-cod8.png)
 
-Выберите Корневой контекст:
+* Выберите Корневой контекст:
 
 ![](photo/fw-cod9.png)
 
-Настройте локальную сеть Вручную:
+* Настройте локальную сеть Вручную:
 
 ![](photo/fw-cod10.png)
 
-Ведите локальный IP-адрес и маску подсети в формате ip/маска и нажмите Enter:
+* Ведите локальный IP-адрес и маску подсети в формате ip/маска и нажмите Enter:
 
 ![](photo/fw-cod11.png)
 
-Проверить можно выбрав соответствующий пункт меню:
+* Проверить можно выбрав соответствующий пункт меню:
 
 ![](photo/fw-cod12.png)
 
 
-Также при вводе с клавиатуры "с" и нажатие Enter или же сочетание клавич Ctrl + D:
-        можно увидеть адрес и порт для доступа к веб-интерфейсу для дальнейшей настройки
+* Также при вводе с клавиатуры "с" и нажатие Enter или же сочетание клавич Ctrl + D:
+    *  можно увидеть адрес и порт для доступа к веб-интерфейсу для дальнейшей настройки
 
 ![](photo/fw-cod13.png)
 
@@ -704,22 +704,24 @@ rtr-a(config)#
 ### rtr-cod (ecorouter):
 ### Базовая настройка BGP: 
 * Запустите протокол BGP, указав нужную автономную систему, командой: router bgp <№>
-
-        rtr-cod(config)#router  bgp 64500
-        rtr-cod(config-router)#
+```
+rtr-cod(config)#router  bgp 64500
+rtr-cod(config-router)#
+```
 * Указать уникальный идентификатор маршрутизатора в протоколе BGP, командой: bgp router-id <IP>:
-
-        rtr-cod(config-router)#bgp router-id 178.207.179.4
-        rtr-cod(config-router)#
+```
+rtr-cod(config-router)#bgp router-id 178.207.179.4
+rtr-cod(config-router)#
+```
 * Сконфигурируйте BGP соседство c Интернет провайдером ISP, указав адрес соседа и номер локальной AS, используя команду: neighbor <NEIGHBOR_IP> remote-as <$>:
+```
+rtr-cod(config-router)#neighbor 178.207.179.1 remote-as 31133
+rtr-cod(config-router)#exit
+rtr-cod(config)#write memory
+Building configuration...
 
-        rtr-cod(config-router)#neighbor 178.207.179.1 remote-as 31133
-        rtr-cod(config-router)#exit
-        rtr-cod(config)#write memory
-        Building configuration...
-
-        rtr-cod(config)#
-
+rtr-cod(config)#
+```
   * Проверить состояние всех соединений BGP можно командой show ip bgp summary из режима администрирования (enable):
 
   ![](photo/3.rtr1.png)
@@ -738,31 +740,32 @@ rtr-a(config)#
 ### rtr-cod (ecorouter):
 ### Настройка туннеля GRE между устройствами:
 * Создайте интерфейс туннеля c именем tunnel.0:
-
-        rtr-cod(config)#interface tunnel.0
-        rtr-cod(config-if-tunnel)#
-
+```
+rtr-cod(config)#interface tunnel.0
+rtr-cod(config-if-tunnel)#
+```
   * Назначьте ip адрес в соответствие с требования задания:
- 
-        rtr-cod(config-if-tunnel)#ip address 10.10.10.1/30
-        rtr-cod(config-if-tunnel)#
+```
+rtr-cod(config-if-tunnel)#ip address 10.10.10.1/30
+rtr-cod(config-if-tunnel)#
+```
   * Задайте режим работы туннеля GRE и адресов начала (источника - rtr-cod) и конца туннеля (назначения - rtr-a):
+```
+rtr-cod(config-if-tunnel)#ip tunnel 178.207.179.4 178.207.179.28 mode gre
+rtr-cod(config-if-tunnel)# exit
+rtr-cod(config)#write memory
+Building configuration...
 
-        rtr-cod(config-if-tunnel)#ip tunnel 178.207.179.4 178.207.179.28 mode gre
-        rtr-cod(config-if-tunnel)# exit
-        rtr-cod(config)#write memory
-        Building configuration...
-
-        rtr-cod(config)#
-
-    * Для просмотра состояния туннеля используется команда show interface tunnel.0 из режима администрирования (enable):
+rtr-cod(config)#
+```
+* Для просмотра состояния туннеля используется команда show interface tunnel.0 из режима администрирования (enable):
 
 ![](photo/4tun1.png)
 
 ### rtr-a (ecorouter):
 ### Настройка туннеля GRE между устройствами:
 * Реализация аналогично rtr-cod, за исключением соответствующего IP-адресов источника и назначения:
-состояния туннеля должно быть:
+    * состояния туннеля должно быть:
 
 ![](photo/4tun2.png)
 
