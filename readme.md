@@ -847,20 +847,18 @@ IP-адрес шлюза по умолчанию на данном устрой�
 
 # 19
 
-                iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
+    iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
     
 The IP address of each discovered target displays on a separate line.
  Establish iSCSI sessions by logging in to each target:
 
-                iscsiadm --mode node -l all
+    iscsiadm --mode node -l all
 You can view a list of the active iSCSI sessions:
   
-                iscsiadm --mode session
+    iscsiadm --mode session
 
-        service iscsid force-start
-        iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
-        iscsiadm --mode node -l all
-        iscsiadm --mode session
+    iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
+    iscsiadm --mode node -l all
 
 
 # 22 Настройка системы мониторинга
