@@ -609,6 +609,8 @@ rtr-a(config)#
 
 ![](photo/1setname16.png)
 
+---
+
 # 2. Подход к настройке fw-cod
 ## Вариант реализации:
 ### fw-cod (ideco):
@@ -699,6 +701,8 @@ rtr-a(config)#
 
 ![](photo/fw-cod13.png)
 
+---
+
 # 3. Настройка маршрутизации BGP на rtr-cod
 ## Вариант реализации:
 ### rtr-cod (ecorouter):
@@ -734,6 +738,8 @@ rtr-cod(config)#
  * Проверить доступ в сеть Интернет:
 
    ![](photo/3.rtr3.png)
+
+---
 
 # 4. Настройка туннелей между офисом «а» и «cod»
 ## Вариант реализации: 
@@ -773,6 +779,7 @@ rtr-cod(config)#
 
 ![](photo/4tun3.png)
 
+---
 
 # 5. Настройка доступа в Интернет
 ## Вариант реализации
@@ -883,7 +890,7 @@ rtr-cod(config)#
 
 * На rtr-a проверяем таблицу трансляции адресовкомандой show ip nat translations из режима администрирования (enable):
 
-
+---
 
 # 19
 
@@ -901,5 +908,9 @@ You can view a list of the active iSCSI sessions:
     iscsiadm --mode node -l all
 
 
+---
+
 # 22 Настройка системы мониторинга
 на rtr-a прописать security none, иначе не работает smnp нормально
+
+---
