@@ -906,6 +906,10 @@ ip route add 0.0.0.0/0 via 172.20.30.254
 
 ---
 
+# 6. Настройка имён и IP-адресации на устройствах rtr-cod и rtr-a
+## Вариант реализации:
+### rtr-cod (ecorouter):
+#### Настройка динамической маршрутизации OSPF:
 # 19
 
     iscsiadm --mode discovery --op update --type sendtargets --portal targetIP
