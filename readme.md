@@ -168,7 +168,7 @@ sed -i "s/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g" /etc/net/sysctl.con
 
 * Для применения настроек, необходимо перезагрузить службу network
 ```
-    systemctl restart network
+systemctl restart network
 ```
 * Проверить:
     * IP-адреса на интерфейсах:
@@ -353,25 +353,25 @@ systemctl enable --now frr
 * Проверка подключения маршрутизатора rtr-cod по bgp:
   * без сохранения настроек, чтобы при перезугрузки конфигураци не сохранилась
 ```
-    ecorouter>en
-    ecorouter#conf t
-    ecorouter(config)#interface isp
-    ecorouter(config-if)#ip address 178.207.179.4/29
-    ecorouter(config-if)#exit
-    ecorouter(config)#  
-    ecorouter(config)#port te0
-    ecorouter(config-port)#service-instance te0/isp
-    ecorouter(config-service-instance)#encapsulation untagged 
-    ecorouter(config-service-instance)#connect ip interface isp 
-    ecorouter(config-service-instance)#exit
-    ecorouter(config-port)#exit
-    ecorouter(config)#
-    ecorouter(config)#router  bgp 64500
-    ecorouter(config-router)#bgp router-id 178.207.179.4
-    ecorouter(config-router)#neighbor 178.207.179.1 remote-as 31133
-    ecorouter(config-router)#exit
-    ecorouter(config)#exit
-    ecorouter#
+ecorouter>en
+ecorouter#conf t
+ecorouter(config)#interface isp
+ecorouter(config-if)#ip address 178.207.179.4/29
+ecorouter(config-if)#exit
+ecorouter(config)#  
+ecorouter(config)#port te0
+ecorouter(config-port)#service-instance te0/isp
+ecorouter(config-service-instance)#encapsulation untagged 
+ecorouter(config-service-instance)#connect ip interface isp 
+ecorouter(config-service-instance)#exit
+ecorouter(config-port)#exit
+ecorouter(config)#
+ecorouter(config)#router  bgp 64500
+ecorouter(config-router)#bgp router-id 178.207.179.4
+ecorouter(config-router)#neighbor 178.207.179.1 remote-as 31133
+ecorouter(config-router)#exit
+ecorouter(config)#exit
+ecorouter#
 ```
 * Результат:
 
@@ -396,15 +396,15 @@ systemctl enable --now frr
     4. задаём доменное имя (ip domain-name <DOMAIN_NAME>);
     5. сохраняем конфигурацию (write memory).
 ```
-    ecorouter>enable
-    ecorouter#configure terminal 
-    Enter configuration commands, one per line.  End with CNTL/Z.
-    ecorouter(config)#hostname rtr-cod
-    rtr-cod(config)#ip domain-name cod.ssa2026.region
-    rtr-cod(config)#write memory 
-    Building configuration...
+ecorouter>enable
+ecorouter#configure terminal 
+Enter configuration commands, one per line.  End with CNTL/Z.
+ecorouter(config)#hostname rtr-cod
+rtr-cod(config)#ip domain-name cod.ssa2026.region
+rtr-cod(config)#write memory 
+Building configuration...
     
-    rtr-cod(config)#
+rtr-cod(config)#
 ```
 * Проверить имя устройства можно командой show hostname из режима администрирования (enable):
 
@@ -525,8 +525,8 @@ rtr-cod(config)#
     * переходим в режим конфигурации (configure terminal)
     * с помощью команды ip route <IP_NETWORK/PREFIX> <NEXTHOP_IP_ADDRESS> задаём маршут по умолчанию (шлюз)
 ```
-    rtr-a(config)#ip route 0.0.0.0/0 178.207.179.25
-    rtr-a(config)#
+rtr-a(config)#ip route 0.0.0.0/0 178.207.179.25
+rtr-a(config)#
 ```
 * Проверить назначенный маршрут по умолчанию можно командой show ip route static из режима администрирования (enable):
 
@@ -792,17 +792,19 @@ rtr-cod(config)#
 ![](photo/5inter1.png)
 
 * Назначаем интерфейс isp как ip nat outside:
-
-        rtr-cod(config)#interface isp 
-        rtr-cod(config-if)#ip nat outside 
-        rtr-cod(config-if)#exit
-        rtr-cod(config)#
+```
+rtr-cod(config)#interface isp 
+rtr-cod(config-if)#ip nat outside 
+rtr-cod(config-if)#exit
+rtr-cod(config)#
+```
   * Назначаем интерфейс fw-cod как ip nat inside:
-
-        rtr-cod(config)#interface fw-cod 
-        rtr-cod(config-if)#ip nat inside 
-        rtr-cod(config-if)#exit
-        rtr-cod(config)#
+```
+rtr-cod(config)#interface fw-cod 
+rtr-cod(config-if)#ip nat inside 
+rtr-cod(config-if)#exit
+rtr-cod(config)#
+```
 * Создаём nat pool, чтобы указать диапазоны IP-адресов, который в дальнейшем будут попадать под правила трансляции: 
   * необходимо не только указать диапазон IP-адресов из сети между rtr-cod и fw-cod
   *  но и диапазоны IP-адресов из сетей:
@@ -813,30 +815,35 @@ rtr-cod(config)#
   * т.к. в дальнейшем будет реализована маршрутизация между rtr-cod и fw-cod
   * диапазон 192.168.20.0/24 - vlan200 указывать не надо, т.к. по условиям задания
      * "Для «cod» трафик VLAN - DATA не должен маршрутизироваться"
-
-            rtr-cod(config)#ip nat pool fw-cod 172.16.1.1-172.16.1.2
-            rtr-cod(config)#ip nat pool vlan100 192.168.10.1-192.168.10.254
-            rtr-cod(config)#ip nat pool vlan300 192.168.30.1-192.168.30.254
-            rtr-cod(config)#ip nat pool vlan400 192.168.40.1-192.168.40.254
-            rtr-cod(config)#ip nat pool vlan500 192.168.50.1-192.168.50.254
-            rtr-cod(config)#
+```
+rtr-cod(config)#ip nat pool fw-cod 172.16.1.1-172.16.1.2
+rtr-cod(config)#ip nat pool vlan100 192.168.10.1-192.168.10.254
+rtr-cod(config)#ip nat pool vlan300 192.168.30.1-192.168.30.254
+rtr-cod(config)#ip nat pool vlan400 192.168.40.1-192.168.40.254
+rtr-cod(config)#ip nat pool vlan500 192.168.50.1-192.168.50.254
+rtr-cod(config)#
+```
 * Создать правило трансляции адресов для каждого созданного nat pool, через интерфейс, который с точки зрения NAT outside:
+```
+rtr-cod(config)#ip nat source dynamic inside pool fw-cod overload interface isp 
+rtr-cod(config)#ip nat source dynamic inside pool vlan100 overload interface isp
+rtr-cod(config)#ip nat source dynamic inside pool vlan300 overload interface isp 
+rtr-cod(config)#ip nat source dynamic inside pool vlan400 overload interface isp 
+rtr-cod(config)#ip nat source dynamic inside pool vlan500 overload interface isp 
+rtr-cod(config)#write memory
+Building configuration...
 
-        rtr-cod(config)#ip nat source dynamic inside pool fw-cod overload interface isp 
-        rtr-cod(config)#ip nat source dynamic inside pool vlan100 overload interface isp
-        rtr-cod(config)#ip nat source dynamic inside pool vlan300 overload interface isp 
-        rtr-cod(config)#ip nat source dynamic inside pool vlan400 overload interface isp 
-        rtr-cod(config)#ip nat source dynamic inside pool vlan500 overload interface isp 
-        rtr-cod(config)#write memory
-        Building configuration...
-
-        rtr-cod(config)#
+rtr-cod(config)#
+```
 * Проверить доступ в сеть Интернет с виртуальной машины fw-cod используя консоль:
 
 ![](photo/5inter2.png)
-    * временно назначаем адрес шлюза по умолчанию, используя команду ip route add:
 
-        ip route add 0.0.0.0/0 via 172.16.1.1
+* временно назначаем адрес шлюза по умолчанию, используя команду ip route add:
+```
+ip route add 0.0.0.0/0 via 172.16.1.1
+```
+
 * Проверяем доступ в сеть Интернет:
 
 ![](photo/5inter3.png)
@@ -851,12 +858,13 @@ rtr-cod(config)#
        * "Все интерфейсы, кроме туннельных, должны быть переведены в пассивный режим"
    * так же не стоит добавлять маршрут в сеть 192.168.20.0/24 (vlan200), т.к.
        * "Для «cod» трафик VLAN - DATA не должен маршрутизироваться"
-
-             rtr-cod(config)#ip route 192.168.10.0/24 172.16.1.2
-             rtr-cod(config)#ip route 192.168.30.0/24 172.16.1.2
-             rtr-cod(config)#ip route 192.168.40.0/24 172.16.1.2
-             rtr-cod(config)#ip route 192.168.50.0/24 172.16.1.2
-             rtr-cod(config)#
+```
+rtr-cod(config)#ip route 192.168.10.0/24 172.16.1.2
+rtr-cod(config)#ip route 192.168.30.0/24 172.16.1.2
+rtr-cod(config)#ip route 192.168.40.0/24 172.16.1.2
+rtr-cod(config)#ip route 192.168.50.0/24 172.16.1.2
+rtr-cod(config)#
+```
 
 * Проверить таблицу маршрутизации можно командой show ip route из режима администрирования (enable):
 
@@ -866,7 +874,10 @@ rtr-cod(config)#
 ### Настройка dynamic PAT:
 * Реализация аналогично rtr-cod, за исключением:
     * интерфейсы с точки зрения NAT должны быть:
+
 ![](photo/5inter6.png)
+
+* test
     * nat pool должны быть:
 
 ![](photo/5inter7.png)
@@ -879,11 +890,12 @@ rtr-cod(config)#
 * Доступ в сеть Интернет можно проверить с виртуальной машины sw1-a используя команды временного назначения IP-адресов и шлюза:
     * назначив средствами iproute2 временно на интерфейс,смотрящий в сторону rtr-a (ens19),
     * создав тегированный подинтерфейс с IP-адресом из подсети для vlan300
-
-            ip link add link ens19 name ens19.300 type vlan id 300
-            ip link set dev ens19.300 up
-            ip addr add 172.20.30.1/24 dev ens19.300
-            ip route add 0.0.0.0/0 via 172.20.30.254
+```
+ip link add link ens19 name ens19.300 type vlan id 300
+ip link set dev ens19.300 up
+ip addr add 172.20.30.1/24 dev ens19.300
+ip route add 0.0.0.0/0 via 172.20.30.254
+```
 * Доступ в сеть Интернет с sw1-a:
 
 ![](photo/5inter9.png)
