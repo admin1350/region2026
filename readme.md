@@ -1427,10 +1427,9 @@ ip route add 0.0.0.0/0 via 172.16.1.1
 
 ![](photo/8.fw-cod12.png)
 
+![](photo/8.fw-cod13.png)
 
 * Выполняем вход в веб-интерфейс управления fw-cod:
-
-![](photo/8.fw-cod13.png)
 
 ![](photo/8.fw-cod14.png)
 
