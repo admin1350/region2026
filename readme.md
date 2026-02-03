@@ -1137,6 +1137,7 @@ ovs-vsctl add-port sw1-a ens21 trunk=100,200,300
 ```
 ovs-vsctl add-port sw1-a ens22 trunk=100,200,300
 ```
+* Проверить добавление портов в коммутатор можно с помощью команды ovs-vsctl show:
 
 ![](photo/7.SW7.png)
 
