@@ -10,8 +10,8 @@
 
 Время на выполнение модуля: 7 часов
 Схема Подкоючения:
-![](https://github.com/admin1350/region2026/blob/main/photo/image_png.png)
-![](https://github.com/admin1350/region2026/blob/main/photo/image-20-285-29_png.png)
+![](photo/image_png.png)
+![](photo/image-20-285-29_png.png)
 ![](photo/image-20-284-29_png.png)
 На виртуальных машинах и оборудовании используются следующие версии ОС и технологические решения:
 | Название устройства 	| ОС 	                            | vCPU 		| RAM 		| 	SSD  |
