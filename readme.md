@@ -1541,6 +1541,8 @@ openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
 ```
 update-ca-trust
 ```
+итог мы видим сертификат
+![alt text](изображение.png)
 # 19
 
 
