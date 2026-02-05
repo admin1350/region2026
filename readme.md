@@ -1550,6 +1550,7 @@ srv2-cod кратская инфа по присоединению
 apt-get update && apt-get install -y open-iscsi
 systemctl enable --now iscsid
 iscsiadm --mode discovery --op update --type sendtargets --portal 192.168.20.2
+iscsiadm -m discovery -t sendtargets -p 192.168.20.2
 iscsiadm -m node --login
 ```
 
