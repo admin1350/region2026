@@ -1507,7 +1507,7 @@ ip route add 0.0.0.0/0 via 172.16.1.1
 ![](photo/8.fw-cod30.png)
 
 # 17 Настройка центра сертификации
-КРАТКОЕ РУКОВОДСТВО
+КРАТКОЕ РУКОВОДСТВО для srv1-cod
 ```
 mkdir /var/ca
 ```
@@ -1518,6 +1518,28 @@ mkdir certs crl newcerts private
 echo 01 > serial
 echo 01 > crlnumber
 touch index.txt
+```
+Создать ключ (пароль не требуется)
+```
+openssl genrsa -out private/cakey.pem 4096
+```
+создаем корневой сертификат 
+```
+openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
+  -days 1825 \
+  -subj "/C=RU/O=IRPO/CN=ssa2026"
+```
+разрешаем вход для рута по ssh
+редактируем файл `/etc/openssh/sshd_config` параметр должен выглядеть `PermitRootLogin yes`
+ для cli-cod, admin-cod, cli1-a и cli2-a (alt-workstation):
+ * Забираем через scp корневой сертификат и помещаем его в локальное хранилище сертификатов:
+ ```
+ scp root@srv1-cod.cod.ssa2026.region:/var/ca/cacert.pem /etc/pki/ca-trust/source/anchors/ca.crt
+ ```
+ * Обновляем
+```
+update-ca-trust
+```
 # 19
 
 
