@@ -1531,6 +1531,7 @@ openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
 ```
 разрешаем вход для рута по ssh
 редактируем файл `/etc/openssh/sshd_config` параметр должен выглядеть `PermitRootLogin yes`
+Перезапускаем ssh-server командой `systemctl restart sshd'
  для cli-cod, admin-cod, cli1-a и cli2-a (alt-workstation):
  * Забираем через scp корневой сертификат и помещаем его в локальное хранилище сертификатов:
  ```
