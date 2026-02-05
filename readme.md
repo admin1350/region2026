@@ -1506,6 +1506,18 @@ ip route add 0.0.0.0/0 via 172.16.1.1
 
 ![](photo/8.fw-cod30.png)
 
+# 17 Настройка центра сертификации
+КРАТКОЕ РУКОВОДСТВО
+```
+mkdir /var/ca
+```
+редачим файл /etc/openssl/openssl.cnf
+```
+cd /var/ca
+mkdir certs crl newcerts private
+echo 01 > serial
+echo 01 > crlnumber
+touch index.txt
 # 19
 
 
