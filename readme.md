@@ -1555,26 +1555,32 @@ iscsiadm -m node --login
 ```
 
 #### Шаг 1: Перейти в папку
+```
 cd /var/ca
-
+```
 #### Шаг 2: Создать подпапки
+```
 mkdir certs    # для сертификатов
 mkdir crl      # для списков отозванных
 mkdir newcerts # для новых сертификатов  
 mkdir private  # для приватных ключей
-
+```
 #### Шаг 3: Создать служебные файлы
+```
 touch index.txt  # база данных
 echo 01 > serial # нумерация сертификатов
 echo 01 > crlnumber # нумерация списков отозванных
-
+```
 ##### Шаг 4: Создать ключ (пароль не требуется)
+```
 openssl genrsa -out private/cakey.pem 4096
-
+```
 #### Шаг 5: Создать корневой сертификат
+```
 openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
   -days 1825 \
   -subj "/C=RU/O=IRPO/CN=ssa2026 Root CA"
+```
 ---
 
 # 22 Настройка системы мониторинга
