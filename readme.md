@@ -1587,3 +1587,20 @@ openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
 на rtr-a прописать security none, иначе не работает smnp нормально
 
 ---
+# По поводу  ospf 
+*rtr-a* 
+![rtr-a ospf](изображение-1.png)
+
+*rtr-cod*
+*лучше что бы было так*
+
+![rtr-cod def ospf](изображение-3.png)
+или так 
+
+![rtr-cod osof](изображение-2.png)
+ 
+ А на ideco NGFW
+
+ ![ideco 1](изображение-4.png)
+
+ ![ideco 2](изображение-5.png)
