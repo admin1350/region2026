@@ -1588,18 +1588,18 @@ openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
 
 ---
 # По поводу  ospf 
-*rtr-a* 
+### *rtr-a* (ecorouter)
 ![rtr-a ospf](изображение-1.png)
 
-*rtr-cod*
-*лучше что бы было так*
+### *rtr-cod* (ecorouter)
+#### *лучше что бы было так*
 
 ![rtr-cod def ospf](изображение-3.png)
-или так 
+#### или так 
 
 ![rtr-cod osof](изображение-2.png)
  
- А на ideco NGFW
+ ### А на fw-cod (ideco NGFW)
 
  ![ideco 1](изображение-4.png)
 
