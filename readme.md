@@ -1592,6 +1592,11 @@ openssl req -x509 -new -key private/cakey.pem -out cacert.pem \
 ![rtr-a ospf](изображение-1.png)
 
 ### *rtr-cod* (ecorouter)
+```
+int fw-cod
+ip ospf auth message-degest
+ip ospf message-degest 1 md5 P@ssw0rd
+```
 #### *лучше что бы было так*
 
 ![rtr-cod def ospf](изображение-3.png)
