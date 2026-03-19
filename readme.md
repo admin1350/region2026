@@ -1609,3 +1609,7 @@ ip ospf message-degest 1 md5 P@ssw0rd
  ![ideco 1](изображение-4.png)
 
  ![ideco 2](изображение-5.png)
+
+Если lvm лежит то Активируйте группу томов (VG), 
+
+<img width="831" height="247" alt="изображение" src="https://github.com/user-attachments/assets/a0a4015c-f33e-4a8f-a885-06ab304738e2" />
